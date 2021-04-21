@@ -2,7 +2,6 @@ import requests
 import json
 import decouple
 
-
 def apiCutFunction(imgUrl):
     url = "https://background-removal.p.rapidapi.com/remove"
     img = 'image_url=' + imgUrl
@@ -14,7 +13,7 @@ def apiCutFunction(imgUrl):
     }
 
     response = requests.post(url, data=img, headers=headers)
-
     result = json.loads(response.text)
+    
     print(result['response']['image_url'])
     return(result['response']['image_url'])

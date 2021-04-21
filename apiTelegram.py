@@ -3,6 +3,7 @@ import json
 from time import sleep
 from threading import Thread, Lock
 import decouple
+import apiCut
 
 
 token = decouple.config('KEY_TOKEN')
@@ -33,17 +34,17 @@ def send_message(data, msg):
 
 def get_file(file_path):
     global config
-
     return requests.get(config['url_file'] + str(file_path)).content
 
+def cut_img(arquive_link):
+    print(arquive_link)
+    image_cuted = apiCut.apiCutFunction(arquive_link)
+    print(image_cuted)
 
-def upload_file(data, file):
-    global config
-
-    formatos = {'png': {'metodo': 'sendPhoto', 'send': 'photo'},
-                'text': {'metodo': 'sendDocument', 'send': 'document'}}
-
-    return requests.post(config['url']+formatos['text' if 'text' in file else 'png']['metodo'], {'chat_id': data['message']['chat']['id']}, files={formatos['text' if 'text' in file else 'png']['send']:  open(file, 'rb')}).text
+    config['lock'].acquire()
+    requests.post(config['url'] + 'sendPhoto',
+                  {'chat_id': data['message']['chat']['id'], 'photo': image_cuted})
+    config['lock'].release()
 
 
 while True:
@@ -69,13 +70,15 @@ while True:
             if not 'message' in data:
                 break
 
+            elif 'photo' in data:
+                pass
+
             elif 'document' in data['message']:
                 file_archive = json.loads(requests.post(
                     config['url'] + 'getFile?file_id=' + data['message']['document']['file_id']).text)['result']['file_path']
                 file = get_file(file_archive)
-                print(config['url_file'] + file_archive)
-                open(data['message']['document']
-                     ['file_name'], 'wb').write(file)
+                link = config['url_file'] + file_archive
+                cut_img(link)
 
             elif 'entities' in data['message']:
                 if data['message']['text'] == "/start":
