@@ -70,8 +70,13 @@ while True:
             if not 'message' in data:
                 break
 
-            elif 'photo' in data:
-                pass
+            elif 'photo' in data['message']:
+                photo_archive = json.loads(requests.post(
+                    config['url'] + 'getFile?file_id=' + data['message']['photo'][1]['file_id']).text)['result']['file_path']
+                print(photo_archive)
+                file = get_file(photo_archive)
+                link = config['url_file'] + photo_archive
+                cut_img(link)
 
             elif 'document' in data['message']:
                 file_archive = json.loads(requests.post(
@@ -83,14 +88,12 @@ while True:
             elif 'entities' in data['message']:
                 if data['message']['text'] == "/start":
                     Thread(target=send_message, args=(
-                        data, 'Bot em contrução, lançamento em breve, aguarde...')).start()
+                        data, 'Bot em test, but working...')).start()
                 else:
                     Thread(target=send_message, args=(
-                        data, 'Commando desconhecido')).start()
+                        data, 'Unknow Command')).start()
             else:
                 Thread(target=send_message, args=(
-                    data, 'Use / for commands')).start()
-            Thread(target=send_message, args=(
-                data, 'Em Manutenção')).start()
+                    data, 'Send img file or photo archive')).start()
 
         sleep(2)
