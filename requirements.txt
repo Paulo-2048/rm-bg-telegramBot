@@ -4,4 +4,3 @@ idna==2.10
 python-decouple==3.4
 requests==2.25.1    
 urllib3==1.26.4  
-threading
