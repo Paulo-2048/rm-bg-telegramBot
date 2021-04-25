@@ -1,1 +1,1 @@
-worker: python apiTelegram.py
+web: python apiTelegram.py
