@@ -37,9 +37,7 @@ def get_file(file_path):
     return requests.get(config['url_file'] + str(file_path)).content
 
 def cut_img(arquive_link):
-    print(arquive_link)
     image_cuted = apiCut.apiCutFunction(arquive_link)
-    print(image_cuted)
 
     config['lock'].acquire()
     requests.post(config['url'] + 'sendPhoto',
@@ -65,7 +63,6 @@ while True:
     if len(x['result']) > 0:
         for data in x['result']:
             Thread(target=del_update, args=(data,)).start()
-            print(json.dumps(data, indent=1))
 
             if not 'message' in data:
                 break
@@ -73,7 +70,6 @@ while True:
             elif 'photo' in data['message']:
                 photo_archive = json.loads(requests.post(
                     config['url'] + 'getFile?file_id=' + data['message']['photo'][1]['file_id']).text)['result']['file_path']
-                print(photo_archive)
                 file = get_file(photo_archive)
                 link = config['url_file'] + photo_archive
                 cut_img(link)
