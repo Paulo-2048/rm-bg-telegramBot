@@ -14,6 +14,5 @@ def apiCutFunction(imgUrl):
 
     response = requests.post(url, data=img, headers=headers)
     result = json.loads(response.text)
-    
     print(result['response']['image_url'])
     return(result['response']['image_url'])
